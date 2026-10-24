@@ -17,6 +17,19 @@ class Config:
             load_dotenv()
             # CONFIG ENV VARS
             # self.config[""] = os.getenv("")
+            self.config["RAR_FILE_TO_CRACK"] = os.getenv("RAR_FILE_TO_CRACK")
+
+            self.config["UNRAR_SOFTWARE_FILE_PATH"] = os.getenv("UNRAR_SOFTWARE_FILE_PATH")
+
+            self.config["GEN_CONFIG_LEN_MIN_SIZE_CHAR_SELECT_TO_CRACK"] = os.getenv("GEN_CONFIG_LEN_MIN_SIZE_CHAR_SELECT_TO_CRACK")
+            self.config["GEN_CONFIG_LEN_MIN_SIZE_CHAR_SELECT_TO_CRACK"] = int(self.config["GEN_CONFIG_LEN_MIN_SIZE_CHAR_SELECT_TO_CRACK"])
+
+            self.config["GEN_CONFIG_LEN_MAX_SIZE_CHAR_SELECT_TO_CRACK"] = os.getenv("GEN_CONFIG_LEN_MAX_SIZE_CHAR_SELECT_TO_CRACK")
+            self.config["GEN_CONFIG_LEN_MAX_SIZE_CHAR_SELECT_TO_CRACK"] = int(self.config["GEN_CONFIG_LEN_MAX_SIZE_CHAR_SELECT_TO_CRACK"])
+
+            self.config["GEN_CONFIG_CHARACTERS_ARR_INPUT_FILE"] = os.getenv("GEN_CONFIG_CHARACTERS_ARR_INPUT_FILE")
+
+            self.config["GEN_CONFIG_ATTACK_MODE"] = os.getenv("GEN_CONFIG_ATTACK_MODE")
 
             self.config["GEN_CONFIG_DISPLAY_LOGS"] = os.getenv("GEN_CONFIG_DISPLAY_LOGS")
             self.config["GEN_CONFIG_DISPLAY_LOGS"] = True if str(self.config["GEN_CONFIG_DISPLAY_LOGS"]).strip().lower() == "true" else False
