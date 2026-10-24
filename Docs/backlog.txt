@@ -1,0 +1,43 @@
+ID|Tarea|Descripción|Prioridad|COMPLETADA
+AC01|Establecer línea base de V2|Validar estructura real del ZIP, crear commit inicial y registrar piezas reutilizables de V1; no asumir que los archivos vacíos están implementados.|🔴|NO
+AC02|Corregir esqueleto y dependencias|Crear paquetes y módulos ausentes; resolver import de WorkState en IWorkRepository y asegurar que main.py arranque sin errores.|🔴|NO
+AC03|Definir contratos mínimos del sistema|Mantener separación Application/Infrastructure y concretar contratos de motor, workers, generación, validación, señal y persistencia sin clases sin uso.|🔴|NO
+AC04|Configurar ataque concurrente en .env|Incorporar TERMITES_CONCURRENCY_ATTACK y parámetros RAR, UnRAR, charset y longitudes con errores explícitos al faltar valores.|🔴|NO
+AC05|Limitar número máximo de trabajadores|Fijar MAX_TERMITES_CONCURRENCY=8 en código; validar enteros y mínimo 1; ante valores superiores a 8 aplicar tope de 8 y registrar advertencia; guardar W efectivo.|🔴|NO
+AC06|Crear modelo WorkerState|Definir worker_id, colonia activa, último índice confirmado y estado por trabajador con tipos y validaciones.|🔴|NO
+AC07|Crear modelo WorkState versión 2|Definir identidad del archivo, configuración inmutable, W efectivo, trabajadores, colonias completadas, estado global, métricas y fechas.|🔴|NO
+AC08|Crear enums del dominio|Implementar WorkStatus, WorkerStatus, ColonyStatus y PasswordTestResult; reutilizar patrones de la V1.|🟡|NO
+AC09|Definir invariantes del trabajo|Validar unicidad de workers, IDs 0..W-1, checkpoint perteneciente a su serie, unicidad de colonias y transiciones válidas.|🔴|NO
+AC10|Fijar identidad del trabajo|Guardar ruta, tamaño y SHA-256 del RAR, charset ordenado y límites de longitud; rechazar reanudación con datos distintos.|🔴|NO
+AC11|Implementar generador directo por índice|Calcular candidato para longitud L e índice i mediante base C; producir mismo orden que itertools.product sin iterar índices anteriores.|🔴|NO
+AC12|Implementar series W*n+k|Definir iterador de índices por worker k y W fijo dentro de [0,C^L); W=1 utiliza exactamente el mismo motor.|🔴|NO
+AC13|Demostrar cobertura y exclusividad|Probar para W=1,2,3,4,8, W>M y tamaños no divisibles que cada índice aparece una vez y las series no se cruzan.|🔴|NO
+AC14|Decidir materialización de termitas|Acordar si se conservará TEMP/TERMITES-L{L}/{i}.txt bajo demanda; prohibir generación masiva innecesaria y fijar autoridad de work.json.|🔴|NO
+AC15|Implementar TermiteService concurrente|Si se mantienen .txt, cada worker crea, reutiliza y elimina solo índices de su serie; el contenido coincide con (L,i).|🟡|NO
+AC16|Definir protocolo de candidato comprobado|Registrar INCORRECT solo tras verificación efectiva; ERROR no avanza; caídas entre verificación, borrado y checkpoint permiten repetición pero nunca omisión.|🔴|NO
+AC17|Crear repositorio JSON versión 2|Implementar JsonWorkRepository en Infrastructure/repositories conforme a IWorkRepository; escritura temporal, fsync, os.replace y validación de esquema.|🔴|NO
+AC18|Crear coordinador único de persistencia|Consolidar checkpoints de varios trabajadores con sincronización; solo un responsable escribe work.json y no hay actualizaciones perdidas.|🔴|NO
+AC19|Definir política de checkpoints|Definir frecuencia, confirmación y persistencia al parar o fallar; aceptar repetir candidatos no persistidos y no saltar ninguno.|🔴|NO
+AC20|Reanudar individualmente cada serie|Con W fijo, worker k sin checkpoint inicia en k; con checkpoint i continúa en i+W y valida la pertenencia a su serie.|🔴|NO
+AC21|Bloquear cambio de trabajadores|Al recuperar, comparar W efectivo de .env con worker_count guardado; rechazar diferencias sin alterar work.json.|🔴|NO
+AC22|Proteger estados anteriores o corruptos|No sobrescribir work.json incompatible; ofrecer archivado controlado; resguardar JSON corrupto y rechazar recuperación insegura.|🟡|NO
+AC23|Impedir dos procesos sobre el mismo trabajo|Implementar bloqueo de instancia por trabajo para que dos procesos no escriban el mismo work.json ni procesen la misma serie.|🔴|NO
+AC24|Implementar servicio de comprobación RAR|Adaptar WinrarService de V1; llamar a UnRAR.exe con rutas seguras y distinguir CORRECT, INCORRECT y ERROR técnico.|🔴|NO
+AC25|Aislar temporales por trabajador|Asegurar que procesos externos no compartan rutas de extracción o archivos temporales que se puedan sobrescribir; sin duplicar el RAR por defecto.|🟡|NO
+AC26|Implementar TermiteWorker|Cada hilo ejecuta su serie uno a uno, comunica resultados y progreso, y consulta señal de parada antes del siguiente intento.|🔴|NO
+AC27|Implementar motor ConcurrentBruteForceService|Crear único motor con ThreadPoolExecutor y W hilos (incluso W=1); coordinar asignación por series y cierre de workers.|🔴|NO
+AC28|Coordinar transición entre colonias|Una colonia L solo se completa cuando todas las series terminaron y sus avances están confirmados; luego avanzar a L+1.|🔴|NO
+AC29|Implementar señal de parada en memoria|Utilizar threading.Event para comunicar hallazgo y evitar iniciar nuevas comprobaciones después de FOUND.|🔴|NO
+AC30|Implementar archivo attack.signal|Crear señal independiente de work.json con 0/1 según acuerdo; asociarla a job_id para evitar señales antiguas y escribirla de modo seguro.|🔴|NO
+AC31|Reconciliar señal tras reinicio|Definir qué hacer si attack.signal=1 pero work.json no refleja FOUND; verificar identidad y coherencia antes de dar un trabajo por finalizado.|🔴|NO
+AC32|Finalizar resultado ganador una vez|El coordinador acepta un solo hallazgo, detiene workers, espera comprobaciones en curso, guarda FOUND y realiza extracción final sin carreras.|🔴|NO
+AC33|Gestionar errores e interrupciones|Definir acciones para Ctrl+C, ERROR, excepción de hilo, error de disco y ejecución externa fallida; persistir PAUSED/FAILED sin adelantar índices.|🔴|NO
+AC34|Integrar Controller y DependencyInjector|Instanciar repositorios, generador, workers, señal y motor; conectar main.py al caso de uso de inicio y reanudación.|🔴|NO
+AC35|Reutilizar utilidades de V1|Revisar y trasladar Config, Logger, FolderController, IWorkRepository y partes válidas de WinrarService y generador; adaptar sin copiar deuda técnica.|🟡|NO
+AC36|Limpiar arquitectura y documentación|Eliminar referencias a modo SEQUENTIAL antiguo; actualizar CLAUDE.md, .env.example y diseño técnico a la V2 realmente implementada.|🟡|NO
+AC37|Probar concurrencia sin RAR real|Usar servicio de comprobación simulado, ensayar distintos tiempos por worker, errores aleatorios y confirmar que no hay duplicados u omisiones.|🔴|NO
+AC38|Probar recuperación y fallos en disco|Simular cortes antes/después de checkpoint y borrado, JSON corrupto, señales caducadas y cambios de W; comprobar que ninguna contraseña queda omitida.|🔴|NO
+AC39|Probar integración con RAR propio|Usar RAR pequeño de prueba y contraseña conocida con 1, 2, 4 y 8 workers; verificar FOUND, ausencia de carreras y extracción correcta.|🔴|NO
+AC40|Medir rendimiento y cerrar criterios|Comparar candidatos por segundo y tiempo total para W=1/2/4/8; no asumir aceleración lineal y documentar resultados y limitaciones.|🟡|NO
+AC41|Revisar seguridad y privacidad de logs|Evitar registrar contraseñas y candidatos en logs o JSON; definir dónde y cómo se muestra/almacena el resultado recuperado.|🟡|NO
+AC42|Validar criterios de aceptación finales|Ejecutar suite completa: series disjuntas, cobertura, W inmutable, checkpoints seguros, señal, parada, reanudación y pruebas de RAR propio.|🔴|NO
