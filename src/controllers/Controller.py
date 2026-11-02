@@ -28,18 +28,31 @@ class Controller:
     def crackPassWordBruteForce(self):
         try:
             self.logger.info("Controller::crackPassWordBruteForce::TRY")
-            rar_file = self.config.getConfig("RAR_FILE_TO_CRACK")
-
-            if not rar_file:
-                self.logger.error(f"Controller::crackPassWordBruteForce::ERROR::NOT_FILE::{rar_file}")
-                return
-
-            rar_path = os.path.join(self.path, rar_file)
-            self.logger.info(f"Controller::crackPassWordBruteForce::{rar_path}")
+            winrar_loader = self._loadWinrar()
 
 
         except Exception as e:
             self.logger.error(f"Controller::crackPassWordBruteForce::ERROR::{str(e)}")
+
+
+    def _loadWinrar(self):
+        try:
+            self.logger.info("Controller::_loadWinrar::TRY")
+            rar_file = self.config.getConfig("RAR_FILE_TO_CRACK")
+
+            if not rar_file:
+                self.logger.error(f"Controller::_loadWinrar::ERROR::NOT_FILE::{rar_file}")
+                return
+
+            rar_path = os.path.join(self.path, rar_file)
+            self.logger.info(f"Controller::_loadWinrar::{rar_path}")
+            use_case = self.dependencies["load_winrar_use_case"]
+            result = use_case.execute(rar_path)
+
+            self.logger.info("Controller::_loadWinrar::OK")
+            return result
+        except Exception as e:
+            self.logger.error(f"Controller::_loadWinrar::ERROR::{str(e)}")
 
 
     def saveLogs(self):
