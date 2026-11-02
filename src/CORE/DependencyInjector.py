@@ -9,10 +9,14 @@ import os
 from src.CORE.Config import Config
 from src.CORE.Logger import Logger
 
+# REPOSITORIES
+from src.Infrastructure.repositories.JsonWorkRepository import JsonWorkRepository
 # SERVICES
 from src.Infrastructure.services.WINRAR.WinrarService import WinrarService
+from src.Infrastructure.services.WorkService import WorkService
 # USE CASES
 from src.Infrastructure.use_cases.LoadWinrarUseCase import LoadWinrarUseCase
+from src.Infrastructure.use_cases.CreateWorkUseCase import CreateWorkUseCase
 
 class DependencyInjector:
     @staticmethod
@@ -42,17 +46,26 @@ class DependencyInjector:
         characters = list(charset)
         logger.info(f"DependencyInjector::CHARACTERS_LOADED::QTY::{len(characters)}")
 
+        # REPOSITORES
+        work_repository = JsonWorkRepository(os.path.join(path, "TEMP", "work.json"))
+
         # SERVICES
         winrar_service = WinrarService()
+        work_service = WorkService(repository=work_repository)
 
         # USE CASES
         load_winrar_use_case = LoadWinrarUseCase(
             winrar_service=winrar_service
+        )
+
+        create_work_use_case = CreateWorkUseCase(
+            work_service=work_service
         )
         
         return {
             "logger": logger,
             "characters": characters,
             "charset": charset,
-            "load_winrar_use_case": load_winrar_use_case
+            "load_winrar_use_case": load_winrar_use_case,
+            "create_work_use_case": create_work_use_case
         }

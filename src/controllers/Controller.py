@@ -29,6 +29,7 @@ class Controller:
         try:
             self.logger.info("Controller::crackPassWordBruteForce::TRY")
             winrar_loader = self._loadWinrar()
+            worker_loader = self._loadWork(winrar_loader)
 
 
         except Exception as e:
@@ -53,7 +54,32 @@ class Controller:
             return result
         except Exception as e:
             self.logger.error(f"Controller::_loadWinrar::ERROR::{str(e)}")
+            return None
 
+
+    def _loadWork(self, rar_path):
+        try:
+            self.logger.info("Controller::_loadWork::TRY")
+
+            state = self.dependencies["create_work_use_case"].execute(
+                rar_path=rar_path,
+                charset=self.dependencies["charset"],
+                min_len=self.config.getConfig(
+                    "GEN_CONFIG_LEN_MIN_SIZE_CHAR_SELECT_TO_CRACK"
+                ),
+                max_len=self.config.getConfig(
+                    "GEN_CONFIG_LEN_MAX_SIZE_CHAR_SELECT_TO_CRACK"
+                ),
+                attack_mode=self.config.getConfig(
+                    "GEN_CONFIG_ATTACK_MODE"
+                )
+            )
+
+            # CREATE? LOADED? CONTINUE PREVIUS?
+
+        except Exception as e:
+            self.logger.error(f"Controller::_loadWork::ERROR::{str(e)}")
+            return None
 
     def saveLogs(self):
         try:
