@@ -20,6 +20,6 @@ dependencies = DependencyInjector.build_dependencies(
 c = Controller(path, config, dependencies)
 
 try:
-    pass
+    c.crackPassWordBruteForce()
 finally:
     c.saveLogs()

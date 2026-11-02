@@ -25,6 +25,12 @@ class Controller:
 
         # VARS
 
+    def crackPassWordBruteForce(self):
+        try:
+            self.logger.info("Controller::crackPassWordBruteForce::TRY")
+        except Exception as e:
+            self.logger.error(f"Controller::crackPassWordBruteForce::ERROR::{str(e)}")
+
 
     def saveLogs(self):
         try:
