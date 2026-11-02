@@ -28,6 +28,16 @@ class Controller:
     def crackPassWordBruteForce(self):
         try:
             self.logger.info("Controller::crackPassWordBruteForce::TRY")
+            rar_file = self.config.getConfig("RAR_FILE_TO_CRACK")
+
+            if not rar_file:
+                self.logger.error(f"Controller::crackPassWordBruteForce::ERROR::NOT_FILE::{rar_file}")
+                return
+
+            rar_path = os.path.join(self.path, rar_file)
+            self.logger.info(f"Controller::crackPassWordBruteForce::{rar_path}")
+
+
         except Exception as e:
             self.logger.error(f"Controller::crackPassWordBruteForce::ERROR::{str(e)}")
 

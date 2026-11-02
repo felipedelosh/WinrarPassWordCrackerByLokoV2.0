@@ -9,6 +9,11 @@ import os
 from src.CORE.Config import Config
 from src.CORE.Logger import Logger
 
+# SERVICES
+from src.Infrastructure.services.WINRAR.WinrarService import WinrarService
+# USE CASES
+from src.Infrastructure.use_cases.LoadWinrarUseCase import LoadWinrarUseCase
+
 class DependencyInjector:
     @staticmethod
     def build_dependencies(path: str, config: Config) -> dict:
@@ -37,10 +42,17 @@ class DependencyInjector:
         characters = list(charset)
         logger.info(f"DependencyInjector::CHARACTERS_LOADED::QTY::{len(characters)}")
 
+        # SERVICES
+        winrar_service = WinrarService()
 
+        # USE CASES
+        load_winrar_use_case = LoadWinrarUseCase(
+            winrar_service=winrar_service
+        )
         
         return {
             "logger": logger,
             "characters": characters,
-            "charset": charset
+            "charset": charset,
+            "load_winrar_use_case": load_winrar_use_case
         }
